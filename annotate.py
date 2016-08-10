@@ -6,24 +6,42 @@ import csv
 import re
 import fiona
 import shapely.geometry
-from shapely.geometry import Point, shape
+from shapely.geometry import Point
 
 shp_file = "data/neighborhood_data/geo_export_d3ee4d7d-28a5-4a23-a6bb-c8f4747d5b62.shp"
 fc = fiona.open(shp_file)
 
+# A datastructure to hold a shape (neighborhood, beat, etc)
+class Shape:
+    def __init__(self, feature):
+        self.polygon = shapely.geometry.shape(feature['geometry'])
+        self.name = feature['properties']['gnocdc_lab']
+        self.centroid = self.polygon.centroid
+
+# convert to shapes
+shapes = [Shape(feature) for feature in fc]
+
+def sort_shapes(shapes, point):
+    """
+    Sorts the shapes by distance from the shape centroid to the given point
+    """
+    shapes.sort(key = lambda shape: shape.centroid.distance(point))
+    return shapes
+
 def find_neighborhood(lat, lng):
     """
     Finds the neighborhood given the lat, lng
-    Could perhaps be sped up by sorting the features by
-    most likely to have call. Bywater, for instance, would be first.
-    Could also make a spatial index (maybe quad-tree)
-    of each neighborhood's centroid.
     """
     point = Point(lng, lat)
 
-    for feature in fc:
-        if shape(feature['geometry']).contains(point):
-            return feature['properties']['gnocdc_lab']
+    # sorts the shapes by distance from shape centroid the point
+    sorted_shapes = sort_shapes(shapes, point)
+
+    # now that shapes are sorted, we should find the
+    # boundary shape pretty quick
+    for shape in sorted_shapes:
+        if shape.polygon.contains(point):
+            return shape.name
 
     return None
 
