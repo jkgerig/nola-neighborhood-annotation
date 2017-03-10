@@ -8,14 +8,14 @@ import fiona
 import shapely.geometry
 from shapely.geometry import Point
 
-shp_file = "data/neighborhood_data/geo_export_d3ee4d7d-28a5-4a23-a6bb-c8f4747d5b62.shp"
+shp_file = "data/neighborhood_data/Neighborhood_Statistical_Areas.shp"
 fc = fiona.open(shp_file)
 
 # A datastructure to hold a shape (neighborhood, beat, etc)
 class Shape:
     def __init__(self, feature):
         self.polygon = shapely.geometry.shape(feature['geometry'])
-        self.name = feature['properties']['gnocdc_lab']
+        self.name = feature['properties']['GNOCDC_LAB']
         self.centroid = self.polygon.centroid
 
 # convert to shapes

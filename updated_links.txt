@@ -1,5 +1,0 @@
-Original:
-https://data.nola.gov/Geographic-Base-Layers/NOLA-Neighborhood-Statistical-Areas/ukvx-5dku
-
-New:
-http://portal-nolagis.opendata.arcgis.com/datasets/e7daa4c977d14e1b9e2fa4d7aff81e59_0.zip
